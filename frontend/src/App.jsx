@@ -4,6 +4,7 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import CallPage from "./pages/CallPage.jsx";
+import FriendsPage from "./pages/FriendsPage.jsx";
 import NotificationsPage from "./pages/NotificationsPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
 
@@ -92,6 +93,16 @@ const App = () => {
               : <Navigate to="/login" />
           } 
         />
+        <Route 
+  path="/friends" 
+  element={
+    isAuthenticated && isOnboarded ? (
+      <Layout showSidebar={true}>
+        <FriendsPage />
+      </Layout>
+    ) : <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+  } 
+/>
       </Routes>
 
       <Toaster />
