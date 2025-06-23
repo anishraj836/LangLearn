@@ -1,0 +1,14 @@
+{
+  "name": "langlearn",
+  "version": "1.0.0",
+  "description": "A modern language learning platform that connects people worldwide for language exchange through chat, video calls, and friendship building.",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run build && npm run start --prefix backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
