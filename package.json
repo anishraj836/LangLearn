@@ -4,27 +4,8 @@
   "description": "A modern language learning platform that connects people worldwide for language exchange",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:frontend": "cd frontend && npm install && npm run build",
-    "build:backend": "cd backend && npm install",
-    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "start": "cd backend && npm start",
-    "start:backend": "cd backend && npm start",
-    "start:frontend": "cd frontend && npm run preview",
-    "clean": "rm -rf frontend/dist backend/node_modules frontend/node_modules",
-    "clean:install": "npm run clean && npm run install:all",
-    "test": "echo \"No tests specified\" && exit 0",
-    "lint": "npm run lint:frontend && npm run lint:backend",
-    "lint:frontend": "cd frontend && npm run lint",
-    "lint:backend": "cd backend && npm run lint",
-    "format": "npm run format:frontend && npm run format:backend",
-    "format:frontend": "cd frontend && npm run format",
-    "format:backend": "cd backend && npm run format",
-    "render-build": "npm run build:backend && npm run build:frontend"
-    "render-start": "npm start"
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
   },
   "keywords": [
     "language-learning",
@@ -38,9 +19,6 @@
   ],
   "author": "LangLearn Team",
   "license": "MIT",
-  "dependencies": {
-    "concurrently": "^8.2.2"
-  },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
