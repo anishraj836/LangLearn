@@ -78,6 +78,7 @@ export const acceptFriendRequest = async function(req,res){
         }
         friendRequest.status = "accepted";
         await friendRequest.save();
+        
         //add both users to each other's friends list
         const senderId = friendRequest.sender;
         const recipientId = friendRequest.recipient;
@@ -87,6 +88,17 @@ export const acceptFriendRequest = async function(req,res){
         await User.findByIdAndUpdate(recipientId, {
             $addToSet: {friends: senderId}
         });
+        
+        // Delete the friend request after 10 seconds
+        setTimeout(async () => {
+            try {
+                await FriendRequest.findByIdAndDelete(requestId);
+                console.log(`Friend request ${requestId} deleted after acceptance`);
+            } catch (error) {
+                console.error("Error deleting friend request:", error);
+            }
+        }, 10000); // 10 seconds
+        
         res.status(200).json({friendRequest});
     }catch(error){
         console.error("Error in acceptFriendRequest controller", error.message);
