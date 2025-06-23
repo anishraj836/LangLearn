@@ -23,8 +23,8 @@
     "format": "npm run format:frontend && npm run format:backend",
     "format:frontend": "cd frontend && npm run format",
     "format:backend": "cd backend && npm run format",
-    "render-build": "npm run build:backend",
-    "render-start": "npm run start:backend"
+    "render-build": "cd backend && npm install",
+    "render-start": "cd backend && npm start"
   },
   "keywords": [
     "language-learning",
