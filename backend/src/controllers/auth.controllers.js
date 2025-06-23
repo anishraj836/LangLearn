@@ -121,7 +121,7 @@ export async function onboard(req,res) {
             isOnboarded: true,
         },{new: true});
         if(!updatedUser) return res.status(404).json({message: "User not found"});
-        try {await upsertStreamUser({
+        try {await createStreamUser({
             id: updatedUser._id.toString(),
             name: updatedUser.fullName,
             image: updatedUser.profilePic||"",
