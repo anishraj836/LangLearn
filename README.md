@@ -2,6 +2,7 @@
 
 A modern language learning platform that connects people worldwide for language exchange through chat, video calls, and friendship building.
 
+🔗 Try it now: LangLearn on Render
 ## ✨ Features
 
 ### Core Functionality
