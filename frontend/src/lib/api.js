@@ -67,3 +67,7 @@ export const getUserById = async (id) => {
   const response = await axiosInstance.get(`/users/${id}`);
   return response.data;
 };
+export const updateProfile = async (userData) => {
+  const response = await axiosInstance.post("/users/profile", userData);
+  return response.data;
+};

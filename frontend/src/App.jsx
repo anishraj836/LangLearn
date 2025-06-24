@@ -7,7 +7,7 @@ import CallPage from "./pages/CallPage.jsx";
 import FriendsPage from "./pages/FriendsPage.jsx";
 import NotificationsPage from "./pages/NotificationsPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
-
+import UpdateProfilePage from "./pages/UpdateProfilePage.jsx";
 import { Toaster } from "react-hot-toast";
 
 import PageLoader from "./components/PageLoader.jsx";
@@ -57,11 +57,33 @@ const App = () => {
         />
 
         <Route 
+          path="/friends" 
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <FriendsPage />
+              </Layout>
+            ) : <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+          } 
+        />
+
+        <Route 
           path="/chat/:id" 
           element={
-            isAuthenticated &&isAuthenticated
+            isAuthenticated
               ? (<Layout showSidebar={true}><ChatPage /> </Layout>)
               : <Navigate to={isAuthenticated?"/onboarding":"/login"} />
+          } 
+        />
+
+        <Route 
+          path="/update-profile" 
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <UpdateProfilePage />
+              </Layout>
+            ) : <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
           } 
         />
 
@@ -77,7 +99,7 @@ const App = () => {
         <Route 
           path="/notifications" 
           element={
-            isAuthenticated &&isAuthenticated
+            isAuthenticated
               ? (<Layout showSidebar={true}><NotificationsPage /> </Layout>)
               : <Navigate to={isAuthenticated?"/onboarding":"/login"} />
           } 
@@ -93,16 +115,6 @@ const App = () => {
               : <Navigate to="/login" />
           } 
         />
-        <Route 
-  path="/friends" 
-  element={
-    isAuthenticated && isOnboarded ? (
-      <Layout showSidebar={true}>
-        <FriendsPage />
-      </Layout>
-    ) : <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-  } 
-/>
       </Routes>
 
       <Toaster />

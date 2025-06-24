@@ -6,6 +6,7 @@ import {rejectFriendRequest,getOutgoingFriendRequests,getMyFriends,getRecommende
 //applying auth middleware route to all
 router.use(protectRoute);
 
+router.post("/profile", updateProfile);
 router.get("/friends",protectRoute,getMyFriends);
 router.get("/",protectRoute,getRecommendedUsers);
 router.get("/outgoing-friend-requests",getOutgoingFriendRequests);
