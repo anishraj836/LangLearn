@@ -9,6 +9,12 @@ export const login = async (loginData) => {
   const response = await axiosInstance.post("/auth/login", loginData);
   return response.data;
 };
+
+export const demoLogin = async () => {
+  const response = await axiosInstance.post("/auth/demo");
+  return response.data;
+};
+
 export const logout = async () => {
   const response = await axiosInstance.post("/auth/logout");
   return response.data;
@@ -59,15 +65,22 @@ export async function acceptFriendRequest(requestId) {
   return response.data;
 }
 
-export async function getStreamToken() {
-  const response = await axiosInstance.get("/chat/token");
-  return response.data;
-}
 export const getUserById = async (id) => {
   const response = await axiosInstance.get(`/users/${id}`);
   return response.data;
 };
+
 export const updateProfile = async (userData) => {
   const response = await axiosInstance.post("/users/profile", userData);
   return response.data;
 };
+
+export async function getMessages(userId) {
+  const response = await axiosInstance.get(`/chat/${userId}`);
+  return response.data;
+}
+
+export async function sendMessage(userId, messageData) {
+  const response = await axiosInstance.post(`/chat/send/${userId}`, messageData);
+  return response.data;
+}

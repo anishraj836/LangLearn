@@ -9,12 +9,6 @@ const Navbar = () => {
   const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
 
-  // const queryClient = useQueryClient();
-  // const { mutate: logoutMutation } = useMutation({
-  //   mutationFn: logout,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
   const { logoutMutation } = useLogout();
 
   return (
@@ -26,25 +20,24 @@ const Navbar = () => {
             <div className="pl-5">
               <Link to="/" className="flex items-center gap-2.5">
                 <ShipWheelIcon className="size-9 text-primary" />
-                <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
+                <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
                   LangLearn
                 </span>
               </Link>
             </div>
           )}
 
-          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto">
             <Link to={"/notifications"}>
               <button className="btn btn-ghost btn-circle">
-                <BellIcon className="h-6 w-6 text-base-content opacity-70" />
+                <BellIcon className="h-5 w-5 text-base-content opacity-70" />
               </button>
             </Link>
           </div>
 
-          {/* TODO */}
           <ThemeSelector />
 
-          <div className="avatar">
+          <div className="avatar ml-2">
             <div className="w-9 rounded-full">
               <img src={authUser?.profilePic} alt="User Avatar" rel="noreferrer" />
             </div>
@@ -52,7 +45,7 @@ const Navbar = () => {
 
           {/* Logout button */}
           <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
-            <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+            <LogOutIcon className="h-5 w-5 text-base-content opacity-70" />
           </button>
         </div>
       </div>

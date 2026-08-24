@@ -7,12 +7,18 @@ import {
   sendFriendRequest,
 } from "../lib/api";
 import { Link } from "react-router-dom";
-import { CheckCircleIcon, MapPinIcon, UserPlusIcon, UsersIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  MapPinIcon,
+  UserPlusIcon,
+  UsersIcon,
+  Flame,
+} from "lucide-react";
 
 import { capitalize } from "../lib/utils";
-
 import FriendCard, { getLanguageFlag } from "../components/FriendCard";
 import NoFriendsFound from "../components/NoFriendsFound";
+import MostCompatibleCard from "../components/MostCompatibleCard";
 
 const HomePage = () => {
   const queryClient = useQueryClient();
@@ -23,15 +29,13 @@ const HomePage = () => {
     queryFn: getUserFriends,
   });
 
-  const {
-  data,
-  isLoading: loadingUsers,
-} = useQuery({
-  queryKey: ["users"],
-  queryFn: getRecommendedUsers,
-});
+  const { data, isLoading: loadingUsers } = useQuery({
+    queryKey: ["users"],
+    queryFn: getRecommendedUsers,
+  });
 
-const recommendedUsers = data?.recommendedUsers || [];
+  const mostCompatible = data?.mostCompatible || null;
+  const recommendedUsers = data?.recommendations || [];
 
   const { data: outgoingFriendReqs } = useQuery({
     queryKey: ["outgoingFriendReqs"],
@@ -54,8 +58,19 @@ const recommendedUsers = data?.recommendedUsers || [];
   }, [outgoingFriendReqs]);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="container mx-auto space-y-10">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-10 max-w-7xl mx-auto">
+      {/* Most Compatible Partner Spotlight */}
+      {mostCompatible && (
+        <section>
+          <MostCompatibleCard
+            user={mostCompatible}
+            onSendRequest={(id) => sendRequestMutation(id)}
+          />
+        </section>
+      )}
+
+      {/* Your Friends */}
+      <div className="space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Your Friends</h2>
           <Link to="/notifications" className="btn btn-outline btn-sm">
@@ -66,7 +81,7 @@ const recommendedUsers = data?.recommendedUsers || [];
 
         {loadingFriends ? (
           <div className="flex justify-center py-12">
-            <span className="loading loading-spinner loading-lg" />
+            <span className="loading loading-spinner loading-lg text-primary" />
           </div>
         ) : friends.length === 0 ? (
           <NoFriendsFound />
@@ -77,99 +92,118 @@ const recommendedUsers = data?.recommendedUsers || [];
             ))}
           </div>
         )}
-
-        <section>
-          <div className="mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Meet New Learners</h2>
-                <p className="opacity-70">
-                  Discover perfect language exchange partners based on your profile
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {loadingUsers ? (
-            <div className="flex justify-center py-12">
-              <span className="loading loading-spinner loading-lg" />
-            </div>
-          ) : recommendedUsers.length === 0 ? (
-            <div className="card bg-base-200 p-6 text-center">
-              <h3 className="font-semibold text-lg mb-2">No recommendations available</h3>
-              <p className="text-base-content opacity-70">
-                Check back later for new language partners!
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.isArray(recommendedUsers)&&recommendedUsers.map((user) => {
-                const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
-
-                return (
-                  <div
-                    key={user._id}
-                    className="card bg-base-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="card-body p-5 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="avatar size-16 rounded-full">
-                          <img src={user.profilePic} alt={user.fullName} />
-                        </div>
-
-                        <div>
-                          <h3 className="font-semibold text-lg">{user.fullName}</h3>
-                          {user.location && (
-                            <div className="flex items-center text-xs opacity-70 mt-1">
-                              <MapPinIcon className="size-3 mr-1" />
-                              {user.location}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Languages with flags */}
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className="badge badge-secondary">
-                          {user.nativeLanguage ? getLanguageFlag(user.nativeLanguage) : ""}
-                          Native: {user.nativeLanguage ? capitalize(user.nativeLanguage) : "Unknown"}
-                        </span>
-                        <span className="badge badge-outline">
-                          {user.learningLanguage ? getLanguageFlag(user.learningLanguage) : ""}
-                          Learning: {user.learningLanguage ? capitalize(user.learningLanguage) : "Unknown"}
-                        </span>
-                      </div>
-
-                      {user.bio && <p className="text-sm opacity-70">{user.bio}</p>}
-
-                      {/* Action button */}
-                      <button
-                        className={`btn w-full mt-2 ${
-                          hasRequestBeenSent ? "btn-disabled" : "btn-primary"
-                        } `}
-                        onClick={() => sendRequestMutation(user._id)}
-                        disabled={hasRequestBeenSent || isPending}
-                      >
-                        {hasRequestBeenSent ? (
-                          <>
-                            <CheckCircleIcon className="size-4 mr-2" />
-                            Request Sent
-                          </>
-                        ) : (
-                          <>
-                            <UserPlusIcon className="size-4 mr-2" />
-                            Send Friend Request
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
       </div>
+
+      {/* Recommended Language Exchange Partners */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            Recommended Language Partners
+          </h2>
+          <p className="opacity-70 text-xs sm:text-sm">
+            Matched via our multi-factor algorithm (Linguistic Reciprocity, Interests, & Timezone Proximity)
+          </p>
+        </div>
+
+        {loadingUsers ? (
+          <div className="flex justify-center py-12">
+            <span className="loading loading-spinner loading-lg text-primary" />
+          </div>
+        ) : recommendedUsers.length === 0 ? (
+          <div className="card bg-base-200 p-6 text-center">
+            <h3 className="font-semibold text-lg mb-2">No recommendations available</h3>
+            <p className="text-base-content opacity-70">
+              Check back later for new language exchange partners!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recommendedUsers.map((user) => {
+              const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
+
+              return (
+                <div
+                  key={user._id}
+                  className="card bg-base-200/80 border border-base-content/10 hover:border-primary/40 hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
+                >
+                  {/* Match Percentage Tag */}
+                  <div className="absolute top-4 right-4 bg-primary/20 border border-primary/30 text-primary text-xs font-black px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-sm">
+                    <Flame className="w-3.5 h-3.5 fill-primary" />
+                    {user.matchScore || 85}% MATCH
+                  </div>
+
+                  <div className="card-body p-5 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="avatar size-16 rounded-2xl relative overflow-hidden border border-primary/20">
+                        <img src={user.profilePic} alt={user.fullName} />
+                      </div>
+
+                      <div>
+                        <h3 className="font-bold text-lg">{user.fullName}</h3>
+                        {user.location && (
+                          <div className="flex items-center text-xs opacity-70 mt-0.5">
+                            <MapPinIcon className="size-3 mr-1" />
+                            {user.location}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Languages */}
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="badge badge-secondary text-xs">
+                        {user.nativeLanguage ? getLanguageFlag(user.nativeLanguage) : ""}
+                        Native: {user.nativeLanguage ? capitalize(user.nativeLanguage) : "Unknown"}
+                      </span>
+                      <span className="badge badge-outline text-xs">
+                        {user.learningLanguage ? getLanguageFlag(user.learningLanguage) : ""}
+                        Learning: {user.learningLanguage ? capitalize(user.learningLanguage) : "Unknown"}
+                      </span>
+                    </div>
+
+                    {/* Match Reason Badges */}
+                    {user.matchReasons?.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {user.matchReasons.slice(0, 2).map((reason, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 rounded-md bg-base-300 text-[10px] text-base-content/80 font-medium"
+                          >
+                            ✓ {reason}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {user.bio && <p className="text-xs opacity-70 line-clamp-2">{user.bio}</p>}
+
+                    {/* Action button */}
+                    <button
+                      className={`btn w-full mt-2 ${
+                        hasRequestBeenSent ? "btn-disabled" : "btn-primary"
+                      } `}
+                      onClick={() => sendRequestMutation(user._id)}
+                      disabled={hasRequestBeenSent || isPending}
+                    >
+                      {hasRequestBeenSent ? (
+                        <>
+                          <CheckCircleIcon className="size-4 mr-2" />
+                          Request Sent
+                        </>
+                      ) : (
+                        <>
+                          <UserPlusIcon className="size-4 mr-2" />
+                          Send Friend Request
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 };
